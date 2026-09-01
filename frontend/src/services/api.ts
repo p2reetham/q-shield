@@ -33,14 +33,26 @@ async function request<T = any>(
 }
 
 export const api = {
-  // Health
-  health: () => request("/health"),
+  // =========================================================
+  // HEALTH
+  // =========================================================
 
-  // Dashboard
-  dashboardSummary: () => request("/dashboard/summary"),
+  health: () =>
+    request("/health"),
 
-  // Keys
-  listKeys: () => request("/keys"),
+  // =========================================================
+  // DASHBOARD
+  // =========================================================
+
+  dashboardSummary: () =>
+    request("/dashboard/summary"),
+
+  // =========================================================
+  // KEYS
+  // =========================================================
+
+  listKeys: () =>
+    request("/keys"),
 
   generateKey: (data: any) =>
     request("/keys/generate", {
@@ -61,12 +73,15 @@ export const api = {
   keyHistory: (keyId: string) =>
     request(`/keys/${keyId}/history`),
 
-  // Digital Signatures
+  // =========================================================
+  // DIGITAL SIGNATURES
+  // =========================================================
+
   listSignatures: () =>
     request("/signatures"),
 
   sign: (data: any, keyId?: string) =>
-    request("/signatures/sign", {
+    request("/sign", {
       method: "POST",
       body: JSON.stringify(
         keyId !== undefined
@@ -76,60 +91,125 @@ export const api = {
     }),
 
   verify: (data: any) =>
-    request("/signatures/verify", {
+    request("/verify", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  // Threat Detection
+  // =========================================================
+  // THREAT DETECTION
+  // =========================================================
+
   analyzeThreat: (data: any) =>
-    request("/threats/analyze", {
+    request("/threat/analyze", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  // Quantum-Inspired Optimization
+  threatScore: (score: number) =>
+    request(`/threat/score/${score}`),
+
+  // =========================================================
+  // QUANTUM ENGINE
+  // =========================================================
+
   optimizeQuantum: (data: any) =>
     request("/quantum/optimize", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  // Blockchain
+  // =========================================================
+  // BLOCKCHAIN
+  // =========================================================
+
   listBlocks: () =>
     request("/blockchain"),
 
   getBlockchain: () =>
     request("/blockchain"),
 
+  getBlock: (blockId: string) =>
+    request(`/blockchain/${blockId}`),
+
   verifyChain: () =>
     request("/blockchain/verify/chain"),
 
-  // Events
-  listEvents: (params?: any) =>
-    request(
-      params
-        ? `/events?${new URLSearchParams(params).toString()}`
-        : "/events"
-    ),
+  // =========================================================
+  // EVENTS
+  // =========================================================
+
+  listEvents: (params?: {
+    threat_level?: string;
+    status?: string;
+    search?: string;
+    limit?: number;
+  }) => {
+    if (!params) {
+      return request("/events");
+    }
+
+    const query = new URLSearchParams();
+
+    if (params.threat_level) {
+      query.set("threat_level", params.threat_level);
+    }
+
+    if (params.status) {
+      query.set("status", params.status);
+    }
+
+    if (params.search) {
+      query.set("search", params.search);
+    }
+
+    if (params.limit !== undefined) {
+      query.set("limit", String(params.limit));
+    }
+
+    const queryString = query.toString();
+
+    return request(
+      queryString ? `/events?${queryString}` : "/events"
+    );
+  },
 
   getEvents: () =>
     request("/events"),
 
-  // Alerts
+  // =========================================================
+  // ALERTS
+  // =========================================================
+
   listAlerts: () =>
     request("/alerts"),
 
   getAlerts: () =>
     request("/alerts"),
 
-  // Demo Attack Simulation
+  acknowledgeAlert: (alertId: string) =>
+    request(`/alerts/${alertId}/acknowledge`, {
+      method: "POST",
+    }),
+
+  resolveAlert: (alertId: string) =>
+    request(`/alerts/${alertId}/resolve`, {
+      method: "POST",
+    }),
+
+  // =========================================================
+  // DEMO
+  // =========================================================
+
   simulateAttack: () =>
     request("/demo/simulate-attack", {
       method: "POST",
     }),
 
-  // Admin Reset
+  // =========================================================
+  // ADMIN RESET
+  // =========================================================
+
   adminReset: (key: string) =>
     request("/admin/reset", {
       method: "POST",
