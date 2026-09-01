@@ -10,7 +10,17 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.database.database import init_db
-from app.api import signatures, threats, quantum, blockchain, events, alerts, keys, dashboard
+from app.api import (
+    signatures,
+    threats,
+    quantum,
+    blockchain,
+    events,
+    alerts,
+    keys,
+    dashboard,
+    admin,
+)
 
 app = FastAPI(
     title="Q-SHIELD API",
