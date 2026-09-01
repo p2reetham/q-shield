@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-graphite-950 text-offwhite font-body antialiased;
+  background-image: linear-gradient(rgba(233,231,224,0.03) 1px, transparent 1px),
+                     linear-gradient(90deg, rgba(233,231,224,0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+::selection {
+  background: rgba(77, 216, 206, 0.35);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #141619;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a4048;
+  border-radius: 3px;
+}
+
+.panel {
+  @apply bg-graphite-900 border border-graphite-700 rounded;
+}
+
+.panel-header {
+  @apply flex items-center justify-between px-4 py-3 border-b border-graphite-700;
+}
+
+.data-label {
+  @apply font-mono text-[11px] tracking-wide text-graphite-500 uppercase;
+}
+
+.mono-value {
+  @apply font-mono;
+}
+
+@keyframes count-up {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-count-up {
+  animation: count-up 0.4s ease-out;
+}
+
+@keyframes block-appear {
+  from { opacity: 0; transform: translateX(-8px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.animate-block-appear {
+  animation: block-appear 0.35s ease-out both;
+}
