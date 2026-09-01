@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     cors_origins: str = os.getenv("CORS_ORIGINS", "http://localhost:5173")
     secret_seed: str = os.getenv("SECRET_SEED", "dev-only-seed")
     demo_mode: bool = os.getenv("DEMO_MODE", "true").lower() == "true"
+    admin_reset_key: str = os.getenv("ADMIN_RESET_KEY", "")
 
     @property
     def cors_origin_list(self) -> list[str]:
