@@ -33,19 +33,13 @@ async function request<T = any>(
 }
 
 export const api = {
-  // ─────────────────────────────────────────
   // Health
-  // ─────────────────────────────────────────
   health: () => request("/health"),
 
-  // ─────────────────────────────────────────
   // Dashboard
-  // ─────────────────────────────────────────
   dashboardSummary: () => request("/dashboard/summary"),
 
-  // ─────────────────────────────────────────
   // Keys
-  // ─────────────────────────────────────────
   listKeys: () => request("/keys"),
 
   generateKey: (data: any) =>
@@ -67,9 +61,7 @@ export const api = {
   keyHistory: (keyId: string) =>
     request(`/keys/${keyId}/history`),
 
-  // ─────────────────────────────────────────
   // Digital Signatures
-  // ─────────────────────────────────────────
   listSignatures: () =>
     request("/signatures"),
 
@@ -89,27 +81,21 @@ export const api = {
       body: JSON.stringify(data),
     }),
 
-  // ─────────────────────────────────────────
   // Threat Detection
-  // ─────────────────────────────────────────
   analyzeThreat: (data: any) =>
     request("/threats/analyze", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  // ─────────────────────────────────────────
   // Quantum-Inspired Optimization
-  // ─────────────────────────────────────────
   optimizeQuantum: (data: any) =>
     request("/quantum/optimize", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  // ─────────────────────────────────────────
   // Blockchain
-  // ─────────────────────────────────────────
   listBlocks: () =>
     request("/blockchain"),
 
@@ -119,35 +105,31 @@ export const api = {
   verifyChain: () =>
     request("/blockchain/verify/chain"),
 
-  // ─────────────────────────────────────────
   // Events
-  // ─────────────────────────────────────────
-  listEvents: () =>
-    request("/events"),
+  listEvents: (params?: any) =>
+    request(
+      params
+        ? `/events?${new URLSearchParams(params).toString()}`
+        : "/events"
+    ),
 
   getEvents: () =>
     request("/events"),
 
-  // ─────────────────────────────────────────
   // Alerts
-  // ─────────────────────────────────────────
   listAlerts: () =>
     request("/alerts"),
 
   getAlerts: () =>
     request("/alerts"),
 
-  // ─────────────────────────────────────────
   // Demo Attack Simulation
-  // ─────────────────────────────────────────
   simulateAttack: () =>
     request("/demo/simulate-attack", {
       method: "POST",
     }),
 
-  // ─────────────────────────────────────────
-  // ADMIN RESET
-  // ─────────────────────────────────────────
+  // Admin Reset
   adminReset: (key: string) =>
     request("/admin/reset", {
       method: "POST",
