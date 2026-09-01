@@ -3,18 +3,40 @@ import { KeyRound } from "lucide-react";
 import { api } from "../../services/api";
 import { KeyItem } from "../../types";
 
-export default function KeyGenerator({ onGenerated }: { onGenerated: () => void }) {
+export default function KeyGenerator({
+  onGenerated,
+}: {
+  onGenerated: () => void;
+}) {
   const [label, setLabel] = useState("");
   const [lastKey, setLastKey] = useState<KeyItem | null>(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const generate = async () => {
+    setError("");
+    setLastKey(null);
     setLoading(true);
+
     try {
-      const key = (await api.generateKey(label || undefined)) as KeyItem;
+      const keyLabel =
+        label.trim() || `Q-SHIELD Key ${new Date().toLocaleString()}`;
+
+      const key = (await api.generateKey({
+        label: keyLabel,
+      })) as KeyItem;
+
       setLastKey(key);
       setLabel("");
       onGenerated();
+    } catch (e: any) {
+      console.error("Key generation failed:", e);
+
+      setError(
+        typeof e?.message === "string"
+          ? e.message
+          : "Failed to generate key"
+      );
     } finally {
       setLoading(false);
     }
@@ -23,14 +45,18 @@ export default function KeyGenerator({ onGenerated }: { onGenerated: () => void 
   return (
     <div className="panel p-4 flex flex-col">
       <div className="data-label mb-2 flex items-center gap-1.5">
-        <KeyRound size={13} /> Generate Key Pair
+        <KeyRound size={13} />
+        Generate Key Pair
       </div>
+
       <input
         value={label}
         onChange={(e) => setLabel(e.target.value)}
         placeholder="Optional label"
-        className="mb-2 bg-graphite-850 border border-graphite-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-cyan-400/50"
+        disabled={loading}
+        className="mb-2 bg-graphite-850 border border-graphite-700 rounded px-3 py-2 text-sm focus:outline-none focus:border-cyan-400/50 disabled:opacity-50"
       />
+
       <button
         onClick={generate}
         disabled={loading}
@@ -39,13 +65,42 @@ export default function KeyGenerator({ onGenerated }: { onGenerated: () => void 
         {loading ? "Generating..." : "Generate RSA-2048 Key Pair"}
       </button>
 
+      {error && (
+        <div className="mb-3 rounded border border-danger/30 bg-danger/10 px-3 py-2 text-xs text-danger">
+          {error}
+        </div>
+      )}
+
       {lastKey && (
         <div className="mt-auto space-y-1 font-mono text-[11px] text-graphite-500 border-t border-graphite-800 pt-3">
-          <div><span className="text-graphite-600">Algorithm</span> {lastKey.algorithm}</div>
-          <div><span className="text-graphite-600">Key ID</span> {lastKey.key_id}</div>
-          <div className="truncate"><span className="text-graphite-600">Public Key</span> {lastKey.public_key_pem.slice(0, 40)}...</div>
-          <div><span className="text-graphite-600">Created</span> {new Date(lastKey.created_at).toLocaleString()}</div>
-          <div><span className="text-graphite-600">Status</span> <span className="text-safe">{lastKey.status}</span></div>
+          <div>
+            <span className="text-graphite-600">Algorithm</span>{" "}
+            {lastKey.algorithm}
+          </div>
+
+          <div>
+            <span className="text-graphite-600">Key ID</span>{" "}
+            {lastKey.key_id}
+          </div>
+
+          <div className="truncate">
+            <span className="text-graphite-600">Public Key</span>{" "}
+            {lastKey.public_key_pem
+              ? `${lastKey.public_key_pem.slice(0, 40)}...`
+              : "—"}
+          </div>
+
+          <div>
+            <span className="text-graphite-600">Created</span>{" "}
+            {lastKey.created_at
+              ? new Date(lastKey.created_at).toLocaleString()
+              : "—"}
+          </div>
+
+          <div>
+            <span className="text-graphite-600">Status</span>{" "}
+            <span className="text-safe">{lastKey.status}</span>
+          </div>
         </div>
       )}
     </div>
