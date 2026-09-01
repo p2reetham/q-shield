@@ -44,6 +44,7 @@ app.include_router(blockchain.router)
 app.include_router(events.router)
 app.include_router(alerts.router)
 app.include_router(dashboard.router)
+app.include_router(admin.router)
 
 
 @app.on_event("startup")
