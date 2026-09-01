@@ -5,11 +5,11 @@ async function request<T = any>(
   options: RequestInit = {}
 ): Promise<T> {
   const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),
     },
-    ...options,
   });
 
   if (!response.ok) {
@@ -19,7 +19,7 @@ async function request<T = any>(
       const error = await response.json();
       message = error.detail || error.message || message;
     } catch {
-      // Keep the default error message if response isn't JSON
+      // Keep default error message
     }
 
     throw new Error(message);
@@ -33,73 +33,121 @@ async function request<T = any>(
 }
 
 export const api = {
+  // ─────────────────────────────────────────
   // Health
+  // ─────────────────────────────────────────
   health: () => request("/health"),
 
+  // ─────────────────────────────────────────
   // Dashboard
+  // ─────────────────────────────────────────
   dashboardSummary: () => request("/dashboard/summary"),
 
+  // ─────────────────────────────────────────
   // Keys
+  // ─────────────────────────────────────────
   listKeys: () => request("/keys"),
+
   generateKey: (data: any) =>
     request("/keys/generate", {
       method: "POST",
       body: JSON.stringify(data),
     }),
+
   rotateKey: (keyId: string) =>
     request(`/keys/${keyId}/rotate`, {
       method: "POST",
     }),
+
   revokeKey: (keyId: string) =>
     request(`/keys/${keyId}/revoke`, {
       method: "POST",
     }),
+
   keyHistory: (keyId: string) =>
     request(`/keys/${keyId}/history`),
 
-  // Digital signatures
-  sign: (data: any) =>
+  // ─────────────────────────────────────────
+  // Digital Signatures
+  // ─────────────────────────────────────────
+  listSignatures: () =>
+    request("/signatures"),
+
+  sign: (data: any, keyId?: string) =>
     request("/signatures/sign", {
       method: "POST",
-      body: JSON.stringify(data),
+      body: JSON.stringify(
+        keyId !== undefined
+          ? { ...data, key_id: keyId }
+          : data
+      ),
     }),
+
   verify: (data: any) =>
     request("/signatures/verify", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  // Threat detection
+  // ─────────────────────────────────────────
+  // Threat Detection
+  // ─────────────────────────────────────────
   analyzeThreat: (data: any) =>
     request("/threats/analyze", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
-  // Quantum-inspired optimization
+  // ─────────────────────────────────────────
+  // Quantum-Inspired Optimization
+  // ─────────────────────────────────────────
   optimizeQuantum: (data: any) =>
     request("/quantum/optimize", {
       method: "POST",
       body: JSON.stringify(data),
     }),
 
+  // ─────────────────────────────────────────
   // Blockchain
-  getBlockchain: () => request("/blockchain"),
-  verifyChain: () => request("/blockchain/verify/chain"),
+  // ─────────────────────────────────────────
+  listBlocks: () =>
+    request("/blockchain"),
 
+  getBlockchain: () =>
+    request("/blockchain"),
+
+  verifyChain: () =>
+    request("/blockchain/verify/chain"),
+
+  // ─────────────────────────────────────────
   // Events
-  getEvents: () => request("/events"),
+  // ─────────────────────────────────────────
+  listEvents: () =>
+    request("/events"),
 
+  getEvents: () =>
+    request("/events"),
+
+  // ─────────────────────────────────────────
   // Alerts
-  getAlerts: () => request("/alerts"),
+  // ─────────────────────────────────────────
+  listAlerts: () =>
+    request("/alerts"),
 
-  // Demo attack simulation
+  getAlerts: () =>
+    request("/alerts"),
+
+  // ─────────────────────────────────────────
+  // Demo Attack Simulation
+  // ─────────────────────────────────────────
   simulateAttack: () =>
     request("/demo/simulate-attack", {
       method: "POST",
     }),
 
-  // Admin
+  // ─────────────────────────────────────────
+  // ADMIN RESET
+  // ─────────────────────────────────────────
   adminReset: (key: string) =>
     request("/admin/reset", {
       method: "POST",
