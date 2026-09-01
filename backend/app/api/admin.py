@@ -4,7 +4,7 @@ from fastapi import APIRouter, Header, HTTPException
 
 from app.core.config import settings
 from app.database.database import Base, engine
-from app.database import models
+from app.database import models  # noqa: F401
 
 router = APIRouter(prefix="/api/admin", tags=["Admin"])
 
